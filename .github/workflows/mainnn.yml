@@ -1,0 +1,47 @@
+name: Kirim Email Otomatis
+
+on:
+  schedule:
+    - cron: "6 8 * * *"   # 08:06 UTC = 15:06 WIB
+  workflow_dispatch:      # bisa dijalankan manual
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install --upgrade pip
+
+      - name: Jalankan script email
+        env:
+          EMAIL: ${{ secrets.GMAIL_ADDRESS }}
+          PASSWORD: ${{ secrets.GMAIL_APP_PASS }}
+          TO_EMAIL: ${{ secrets.GMAIL_ADDRESS }}
+        run: |
+          python3 - << 'EOF'
+          import smtplib
+          from email.mime.text import MIMEText
+          import os
+
+          EMAIL = os.environ["EMAIL"]
+          PASSWORD = os.environ["PASSWORD"]
+          TO_EMAIL = os.environ["TO_EMAIL"]
+
+          msg = MIMEText("Halo! Ini pesan otomatis yang dikirim GitHub pada pukul 15.06.")
+          msg["Subject"] = "Pesan Otomatis GitHub"
+          msg["From"] = EMAIL
+          msg["To"] = TO_EMAIL
+
+          with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+              smtp.login(EMAIL, PASSWORD)
+              smtp.send_message(msg)
+          EOF
