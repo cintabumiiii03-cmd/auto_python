@@ -37,7 +37,7 @@ def kirim_email():
 # =======================================================
 # JADWALKAN PADA 14:48
 # =======================================================
-schedule.every().day.at("14:46").do(kirim_email)
+schedule.every().day.at("14:53").do(kirim_email)
 
 print("Program berjalan, menunggu pukul 14:46...")
 
@@ -47,3 +47,4 @@ print("Program berjalan, menunggu pukul 14:46...")
 while True:
     schedule.run_pending()
     time.sleep(1)
+
