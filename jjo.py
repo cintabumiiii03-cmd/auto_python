@@ -1,50 +1,23 @@
 import smtplib
-import schedule
-import time
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
-# =======================================================
-# KONFIGURASI EMAIL
-# =======================================================
-email_pengirim = "ramatrusdi@gmail.com"
-password_app = "PASSWORD_APLIKASI_16_DIGIT"
-email_tujuan = "ramatrusdi@gmail.com"  # bisa email lain
+EMAIL = "cintabumi@gmail.com"       # email pengirim
+PASSWORD = "your_app_password"       # app password Gmail
+TO_EMAIL = "ramatrusdi@gmail.com"    # email tujuan
 
-# =======================================================
-# FUNGSI KIRIM EMAIL
-# =======================================================
-def kirim_email():
-    subject = "Pesan Otomatis dari Python"
-    body = "Halo! Ini pesan otomatis yang dikirim Python pada pukul 14:46."
+def send_email():
+    subject = "Pesan Otomatis dari GitHub"
+    body = "Halo! Ini pesan otomatis yang dikirim GitHub pada pukul 15.06."
 
-    msg = MIMEMultipart()
-    msg["From"] = email_pengirim
-    msg["To"] = email_tujuan
+    msg = MIMEText(body)
     msg["Subject"] = subject
-    msg.attach(MIMEText(body, "plain"))
+    msg["From"] = EMAIL
+    msg["To"] = TO_EMAIL
 
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(email_pengirim, password_app)
-        server.sendmail(email_pengirim, email_tujuan, msg.as_string())
-        server.quit()
-        print("Email berhasil dikirim!")
-    except Exception as e:
-        print("Gagal mengirim email:", e)
+    # kirim email melalui SMTP Gmail
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(EMAIL, PASSWORD)
+        smtp.send_message(msg)
 
-# =======================================================
-# JADWALKAN PADA 14:48
-# =======================================================
-schedule.every().day.at("14:53").do(kirim_email)
-
-print("Program berjalan, menunggu pukul 14:46...")
-
-# =======================================================
-# LOOPING AGAR PROGRAM TETAP HIDUP
-# =======================================================
-while True:
-    schedule.run_pending()
-    time.sleep(1)
-
+if __name__ == "__main__":
+    send_email()
